@@ -24,7 +24,7 @@ echo "FABRICATE_API_KEY=<your_api_key>" >> .env
 To list all available databases, run the following command:
 
 ```bash
-node list-databases.js
+node ./list-databases.js
 ```
 
 ## Fetch Database
@@ -32,7 +32,7 @@ node list-databases.js
 To fetch a database, run the following command:
 
 ```bash
-DATABASE=<database_name> node fetch-database.js
+DATABASE=<database_name> node ./fetch-database.js
 ```
 
 Replace `<database_name>` with the name of the database you want to fetch.
@@ -42,7 +42,7 @@ Replace `<database_name>` with the name of the database you want to fetch.
 To generate data, run the following command:
 
 ```bash
-DATABASE=<database_name> FORMAT=<format> node generate-data.js
+DATABASE=<database_name> FORMAT=<format> node ./generate-data.js
 ```
 
 Replace `<database_name>` with the name of the database you want to generate data for, and `<format>` with the format you want the data to be generated in (e.g. `csv`, `sql`, etc...).
