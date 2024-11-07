@@ -29,7 +29,7 @@ node ./list-databases.js
 
 ## Fetch Database
 
-To fetch a database, run the following command:
+To fetch info for a specific database, run the following command:
 
 ```bash
 DATABASE=<database_name> node ./fetch-database.js
