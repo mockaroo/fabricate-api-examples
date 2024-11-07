@@ -1,0 +1,16 @@
+{
+  "name": "api_tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "got": "^14.4.4",
+    "node-fetch": "^3.3.2",
+    "unzipper": "^0.12.3"
+  },
+  "scripts": {
+    "start": "node main.js"
+  }
+}
