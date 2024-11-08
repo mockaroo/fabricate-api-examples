@@ -1,13 +1,18 @@
+// To run this script: DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
+
 import dotenv from "dotenv";
-import { createReadStream, createWriteStream, unlinkSync } from "fs";
+import { createReadStream, createWriteStream, existsSync, mkdirSync, rmdirSync, rmSync, unlinkSync } from "fs";
 import got from "got";
 import unzipper from "unzipper";
 
 dotenv.config();
 
-const API_URL = "https://fabricate.mockaroo.com/api/v1";
+const API_URL = process.env.FABRICATE_API_URL || "https://fabricate.mockaroo.com/api/v1";
 const DATABASE = process.env.DATABASE;
 const FORMAT = process.env.FORMAT || "csv";
+const ENTITY = process.env.ENTITY;
+
+console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} in ${FORMAT} format using ${API_URL}...`);
 
 /**
  * Generates data for a given database and downloads the data as CSV.
@@ -16,8 +21,12 @@ const FORMAT = process.env.FORMAT || "csv";
 async function main() {
   const res = await got.post(`${API_URL}/generate_tasks`, {
     responseType: "json",
-    json: { format: FORMAT, database: DATABASE },
     headers: { Authorization: `Bearer ${process.env.FABRICATE_API_KEY}` },
+    json: {
+      format: FORMAT,
+      database: DATABASE,
+      entity: ENTITY,
+    },
   });
 
   const task = res.body;
@@ -30,13 +39,17 @@ async function main() {
   const { data_url } = await poll(task.id);
 
   console.log(`Downloading data from ${data_url}...`);
-  await download(data_url, "./data.zip");
+  let dest = ENTITY ? `./data/${ENTITY}.${FORMAT}` : "data.zip"; // When no entity is specified, the data is delivered as a zip file.
+  await download(data_url, dest);
 
-  console.log("Unzipping data...");
-  await unzip("./data.zip", "./data");
+  if (ENTITY == null) {
+    console.log("Unzipping data...");
+    await unzip("./data.zip", "./data");
+    rmSync("./data.zip");
+    dest = "./data";
+  }
 
-  console.log("Data has been downloaded and extracted to data.csv.");
-  unlinkSync("./data.zip");
+  console.log(`Data has been downloaded and extracted to ${dest}.`);
 }
 
 /**
@@ -88,6 +101,18 @@ function unzip(path, target) {
  * @returns {Promise<void>}
  */
 function download(url, path) {
+  // ensure the directory exists
+  const dir = path.split("/").slice(0, -1).join("/");
+
+  if (dir.length > 0) {
+    // delete the directory if it exists
+    if (existsSync(dir)) {
+      rmSync(dir, { recursive: true });
+    }
+
+    mkdirSync(dir, { recursive: true });
+  }
+
   return new Promise((resolve, reject) => {
     const out = createWriteStream(path);
     got.stream(url).pipe(out);
