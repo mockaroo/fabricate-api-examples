@@ -26,6 +26,18 @@ async function main() {
       format: FORMAT,
       database: DATABASE,
       entity: ENTITY,
+      overrides: {
+        entities: {
+          users: {
+            record_count: 5,
+            fields: {
+              id: {
+                min: 1000,
+              },
+            },
+          },
+        },
+      },
     },
   });
 
