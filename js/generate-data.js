@@ -19,49 +19,59 @@ console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database 
  * @returns {Promise<void>}
  */
 async function main() {
-  const res = await got.post(`${API_URL}/generate_tasks`, {
-    responseType: "json",
-    headers: { Authorization: `Bearer ${process.env.FABRICATE_API_KEY}` },
-    json: {
-      format: FORMAT,
-      database: DATABASE,
-      entity: ENTITY,
-      overrides: {
-        entities: {
-          users: {
-            record_count: 5,
-            fields: {
-              id: {
-                min: 1000,
+  try {
+    const res = await got.post(`${API_URL}/generate_tasks`, {
+      responseType: "json",
+      headers: { Authorization: `Bearer ${process.env.FABRICATE_API_KEY}` },
+      json: {
+        format: FORMAT,
+        database: DATABASE,
+        entity: ENTITY,
+        overrides: {
+          entities: {
+            users: {
+              record_count: 5,
+              fields: {
+                id: {
+                  min: 1000,
+                },
               },
             },
           },
         },
       },
-    },
-  });
+    });
 
-  const task = res.body;
+    const task = res.body;
 
-  if (task.error) {
-    throw new Error(task.error);
+    if (task.error) {
+      throw new Error(task.error);
+    }
+
+    console.log(`Started generating data for database ${DATABASE}... task id: ${task.id}`);
+    const { data_url, error } = await poll(task.id);
+
+    if (error) {
+      console.error("Fabricate API returned an error: " + error);
+      process.exit(1);
+    }
+
+    console.log(`Downloading data from ${data_url}...`);
+    let dest = ENTITY ? `./data/${ENTITY}.${FORMAT}` : "data.zip"; // When no entity is specified, the data is delivered as a zip file.
+    await download(data_url, dest);
+
+    if (ENTITY == null) {
+      console.log("Unzipping data...");
+      await unzip("./data.zip", "./data");
+      rmSync("./data.zip");
+      dest = "./data";
+    }
+
+    console.log(`Data has been downloaded and extracted to ${dest}.`);
+  } catch (error) {
+    console.error("Error:", error.response?.body || error.message);
+    process.exit(1);
   }
-
-  console.log(`Started generating data for database ${DATABASE}... task id: ${task.id}`);
-  const { data_url } = await poll(task.id);
-
-  console.log(`Downloading data from ${data_url}...`);
-  let dest = ENTITY ? `./data/${ENTITY}.${FORMAT}` : "data.zip"; // When no entity is specified, the data is delivered as a zip file.
-  await download(data_url, dest);
-
-  if (ENTITY == null) {
-    console.log("Unzipping data...");
-    await unzip("./data.zip", "./data");
-    rmSync("./data.zip");
-    dest = "./data";
-  }
-
-  console.log(`Data has been downloaded and extracted to ${dest}.`);
 }
 
 /**

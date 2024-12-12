@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "form-data": "^4.0.1",
     "got": "^14.4.4",
     "node-fetch": "^3.3.2",
     "unzipper": "^0.12.3"
