@@ -14,14 +14,14 @@ async function main() {
     entities: [
       {
         name: "users",
-        record_count_expression: "100",
+        record_count: "100",
         records: "exact",
         fields: [
           { name: "id", data_type: "integer", generator: "Number", distribution: "autoincrement" },
           { name: "email", data_type: "varchar", generator: "Email Address" },
           { name: "first_name", data_type: "varchar", generator: "First Name" },
           { name: "last_name", data_type: "varchar", generator: "Last Name" },
-          { name: "created_at", data_type: "datetime", generator: "Datetime", start_date: "2024-01-01", end_date: "2025-01-01" },
+          { name: "created_at", data_type: "datetime", generator: "Datetime", start_date: "2024-01-01", end_date: "2025-01-01", distribution: "uniform" },
           {
             name: "updated_at",
             data_type: "datetime",
@@ -45,7 +45,7 @@ async function main() {
           { name: "user_id", data_type: "integer", generator: "Foreign Key", primary_key_entity: "users", primary_key_field: "id", distribution: "uniform", min: 1, max: 3 },
           { name: "title", data_type: "varchar", generator: "Lorem Ipsum", lorem_ipsum_unit: "words", min: 5, max: 10, distribution: "uniform" },
           { name: "body", data_type: "text", generator: "Lorem Ipsum", lorem_ipsum_unit: "paragraphs", min: 1, max: 3, distribution: "uniform" },
-          { name: "created_at", data_type: "datetime", generator: "Datetime", start_date: "2024-01-01", end_date: "2025-01-01" },
+          { name: "created_at", data_type: "datetime", generator: "Datetime", start_date: "2024-01-01", end_date: "2025-01-01", distribution: "uniform" },
         ],
       },
     ],

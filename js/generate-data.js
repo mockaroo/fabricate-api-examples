@@ -1,7 +1,7 @@
 // To run this script: DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
 
 import dotenv from "dotenv";
-import { createReadStream, createWriteStream, existsSync, mkdirSync, rmdirSync, rmSync, unlinkSync } from "fs";
+import { createReadStream, createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
 import got from "got";
 import unzipper from "unzipper";
 
