@@ -6,12 +6,28 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const API_URL = process.env.FABRICATE_API_URL || "https://fabricate.mockaroo.com/api/v1";
+const WORKSPACE = process.env.WORKSPACE;
 
 async function main() {
   const database = {
     name: "CREATED_FROM_API",
     platform: "postgres",
     entities: [
+      {
+        name: "imported",
+        source: {
+          data: "id,first_name,last_name,email,gender,ip_address\n20,Babara,Hardaway,bhardawayj@oakley.com,Female,47.153.69.170\n21,Alard,Crumb,acrumbk@360.cn,Male,219.36.193.101\n22,Joeann,Masdon,jmasdonl@google.de,Female,144.79.10.69\n23,Boote,Togwell,btogwellm@ebay.com,Agender,82.51.80.14\n24,Shani,Wale,swalen@myspace.com,Genderqueer,15.10.165.131\n25,Bennett,Pomphrett,bpomphretto@eventbrite.com,Male,60.170.162.118\n26,Farleigh,Cockland,fcocklandp@sciencedirect.com,Male,74.76.89.105\n27,Jaimie,Breach,jbreachq@squidoo.com,Male,167.230.194.96\n28,Nappie,Bollon,nbollonr@aboutads.info,Male,160.195.33.41\n29,Felice,Kornalik,fkornaliks@wordpress.org,Male,255.47.181.11\n30,Giordano,Happer,ghappert@dailymotion.com,Male,15.72.50.224\n",
+          filename: "users.csv"
+        },
+        fields: [
+          { name: "id", generator: "Source File", source_column: "id" },
+          { name: "first_name", generator: "Source File", source_column: "first_name" },
+          { name: "last_name", generator: "Source File", source_column: "last_name" },
+          { name: "email", generator: "Source File", source_column: "email" },
+          { name: "gender", generator: "Source File", source_column: "gender" },
+          { name: "ip_address", generator: "Source File", source_column: "ip_address" },
+        ]
+      },
       {
         name: "users",
         record_count: "100",
@@ -52,7 +68,7 @@ async function main() {
   };
 
   try {
-    const response = await got(`${API_URL}/databases`, {
+    const response = await got(`${API_URL}/workspaces/${WORKSPACE}/databases`, {
       method: "POST",
       responseType: "json",
       headers: { Authorization: `Bearer ${process.env.FABRICATE_API_KEY}` },

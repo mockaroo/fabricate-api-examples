@@ -9,6 +9,7 @@ dotenv.config();
 
 const API_URL = process.env.FABRICATE_API_URL || "https://fabricate.mockaroo.com/api/v1";
 const DATABASE = process.env.DATABASE;
+const WORKSPACE = process.env.WORKSPACE;
 const FORMAT = process.env.FORMAT || "csv";
 const ENTITY = process.env.ENTITY;
 
@@ -26,6 +27,7 @@ async function main() {
       json: {
         format: FORMAT,
         database: DATABASE,
+        workspace: WORKSPACE,
         entity: ENTITY,
         overrides: {
           entities: {
