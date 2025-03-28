@@ -1,4 +1,4 @@
-// To run this script: node ./list-databases.js
+// To run this script: WORKSPACE=<workspace_name> node ./list-databases.js
 
 import got from "got";
 import dotenv from "dotenv";

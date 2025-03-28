@@ -1,4 +1,4 @@
-// To run this script: node ./upsert-database.js
+// To run this script: WORKSPACE=<workspace_name> node ./upsert-database.js
 
 import got from "got";
 import dotenv from "dotenv";

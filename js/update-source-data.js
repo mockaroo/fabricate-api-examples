@@ -1,4 +1,4 @@
-// To run this script: DATABASE=<database_name> ENTITY=<entity_name> FILE=<file_path> node ./update-source-data.js
+// To run this script: WORKSPACE=<workspace_name> DATABASE=<database_name> ENTITY=<entity_name> FILE=<file_path> node ./update-source-data.js
 
 import got from "got";
 import fs from "fs";

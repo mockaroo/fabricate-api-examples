@@ -1,4 +1,4 @@
-// To run this script: DATABASE=<database_name> node ./fetch-database.js
+// To run this script: WORKSPACE=<workspace_name> DATABASE=<database_name> node ./delete-database.js
 
 import got from "got";
 import dotenv from "dotenv";

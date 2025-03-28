@@ -1,4 +1,4 @@
-// To run this script: DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
+// To run this script: WORKSPACE=<workspace_name> DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
 
 import dotenv from "dotenv";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
