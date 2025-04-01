@@ -1,4 +1,4 @@
-// To run this script: DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
+// To run this script: WORKSPACE=<workspace_name> DATABASE=<database_name> ENTITY=<optional_entity_name> FORMAT=<format> node ./generate-data.js
 
 import dotenv from "dotenv";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
@@ -9,11 +9,18 @@ dotenv.config();
 
 const API_URL = process.env.FABRICATE_API_URL || "https://fabricate.mockaroo.com/api/v1";
 const DATABASE = process.env.DATABASE;
+const WORKSPACE = process.env.WORKSPACE;
 const CONNECTION = process.env.CONNECTION;
-const FORMAT = CONNECTION ? "connection" : (process.env.FORMAT || "csv");
+const FORMAT = process.env.FORMAT;
 const ENTITY = process.env.ENTITY;
 
-if (FORMAT === "connection") {
+if (!CONNECTION && !FORMAT) {
+  throw new Error("CONNECTION or FORMAT must be provided");
+} else if (CONNECTION && FORMAT) {
+  throw new Error("CONNECTION and FORMAT cannot both be provided");
+}
+
+if (CONNECTION != null) {
   console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} into ${CONNECTION} using ${API_URL}...`);
 } else {
   console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} in ${FORMAT} format using ${API_URL}...`);
@@ -29,9 +36,10 @@ async function main() {
       responseType: "json",
       headers: { Authorization: `Bearer ${process.env.FABRICATE_API_KEY}` },
       json: {
-        format: CONNECTION ? "connection" : FORMAT,
+        format: FORMAT,
         database: DATABASE,
         connection: CONNECTION,
+        workspace: WORKSPACE,
         entity: ENTITY,
         overrides: {
           entities: {
