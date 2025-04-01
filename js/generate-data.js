@@ -10,10 +10,21 @@ dotenv.config();
 const API_URL = process.env.FABRICATE_API_URL || "https://fabricate.mockaroo.com/api/v1";
 const DATABASE = process.env.DATABASE;
 const WORKSPACE = process.env.WORKSPACE;
-const FORMAT = process.env.FORMAT || "csv";
+const CONNECTION = process.env.CONNECTION;
+const FORMAT = process.env.FORMAT;
 const ENTITY = process.env.ENTITY;
 
-console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} in ${FORMAT} format using ${API_URL}...`);
+if (!CONNECTION && !FORMAT) {
+  throw new Error("CONNECTION or FORMAT must be provided");
+} else if (CONNECTION && FORMAT) {
+  throw new Error("CONNECTION and FORMAT cannot both be provided");
+}
+
+if (CONNECTION != null) {
+  console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} into ${CONNECTION} using ${API_URL}...`);
+} else {
+  console.log(`Generating data for ${ENTITY ? `table ${ENTITY} of ` : ""}database ${DATABASE} in ${FORMAT} format using ${API_URL}...`);
+}
 
 /**
  * Generates data for a given database and downloads the data as CSV.
@@ -27,6 +38,7 @@ async function main() {
       json: {
         format: FORMAT,
         database: DATABASE,
+        connection: CONNECTION,
         workspace: WORKSPACE,
         entity: ENTITY,
         overrides: {
@@ -58,18 +70,23 @@ async function main() {
       process.exit(1);
     }
 
-    console.log(`Downloading data from ${data_url}...`);
-    let dest = ENTITY ? `./data/${ENTITY}.${FORMAT}` : "data.zip"; // When no entity is specified, the data is delivered as a zip file.
-    await download(data_url, dest);
+    if (data_url) {
+      console.log(`Downloading data from ${data_url}...`);
 
-    if (ENTITY == null) {
-      console.log("Unzipping data...");
-      await unzip("./data.zip", "./data");
-      rmSync("./data.zip");
-      dest = "./data";
+      let dest = ENTITY ? `./data/${ENTITY}.${FORMAT}` : "data.zip"; // When no entity is specified, the data is delivered as a zip file.
+      await download(data_url, dest);
+
+      if (ENTITY == null) {
+        console.log("Unzipping data...");
+        await unzip("./data.zip", "./data");
+        rmSync("./data.zip");
+        dest = "./data";
+      }
+
+      console.log(`Data has been downloaded and extracted to ${dest}.`);
+    } else {
+      console.log(`Data successfully pushed to the target connection (${CONNECTION}).`);
     }
-
-    console.log(`Data has been downloaded and extracted to ${dest}.`);
   } catch (error) {
     console.error("Error:", error.response?.body || error.message);
     process.exit(1);
