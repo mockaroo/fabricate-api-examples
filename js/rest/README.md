@@ -10,7 +10,7 @@
 Install dependencies
 
 ```bash
-npm install
+yarn install
 ```
 
 Set your API key:
