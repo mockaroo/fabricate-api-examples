@@ -1,12 +1,18 @@
 import 'dotenv/config';
-import { getDatabaseByName, deleteDatabase, createDatabase } from './ephemeral.js';
+import { getDatabaseByName, deleteDatabase, reactivateDatabase, createDatabase } from './ephemeral.js';
 import ora from 'ora';
-import { loadSchema } from './loadSchema.js';
+import { dumpStats, loadSchema } from './loadSchema.js';
 import { generate } from '@fabricate-tools/client';
 
 async function main() {
   const spinner = ora()
   let database = await getDatabaseByName(process.env.FABRICATE_DATABASE)
+
+  if (database.status === 'Deactivated') {
+    spinner.start('Activating database...')
+    await reactivateDatabase(database)
+    spinner.succeed('Database activated')
+  }
 
   if (!database) {
     spinner.start('Creating database...')
@@ -33,6 +39,8 @@ async function main() {
     },
   })
   spinner.succeed('Data pushed to database');
+
+  await dumpStats(database, process.env.FABRICATE_DATABASE)
 }
 
 // Run the setup

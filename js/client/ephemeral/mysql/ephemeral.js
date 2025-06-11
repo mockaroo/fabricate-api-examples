@@ -73,6 +73,11 @@ export async function getDatabaseByName(name) {
   }
 }
 
+export async function reactivateDatabase(database) {
+  await callEphemeralApi('POST', `/database/${database.databaseEntityId}/reactivate`)
+  await waitForPendingTasks(database.databaseEntityId)
+}
+
 export async function listImageTypes() {
   return await callEphemeralApi('GET', '/database/images')
 }
