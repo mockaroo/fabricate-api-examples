@@ -1,4 +1,6 @@
-# Integrating Fabricate and Ephemeral using MySQL
+# Creating an Ephemeral database with Fabricate
+
+This example shows how to create a new Ephemeral database and populate it with data from Fabricate.
 
 ## Prerequisites
 
@@ -14,7 +16,7 @@ Install dependencies
 yarn install
 ```
 
-Copy .env.example to .env and set your API keys and database parameters:
+Copy .env.example to .env and adjust the values accordingly.
 
 ```bash
 cp .env.example .env
